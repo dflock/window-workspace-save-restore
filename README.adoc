@@ -1,0 +1,35 @@
+# window workspace save restore
+:author: Duncan Lock
+
+## Requirements
+
+You need `wmctrl` installed. See: https://www.freedesktop.org/wiki/Software/wmctrl/
+
+For Debian/Ubuntu, you can do:
+
+```console
+$ sudo apt install wmctrl
+```
+
+## Installation
+
+```console
+$ sudo cp window-workspace-save.sh /usr/bin/window-workspace-save
+$ sudo cp window-workspace-restore.sh /usr/bin/window-workspace-restore
+```
+
+## Usage
+
+```console
+# Restore the workspace placement of windows from a file:
+$ cat ~/tmp/windows.txt | /window-workspace-restore
+
+# Restore the workspace placement of just the VSCode windows from a file:
+$ grep 'Visual Studio Code' ~/tmp/windows.txt | /window-workspace-restore
+
+# Save the workspce placement of all windows to a file:
+$ window-workspace-save > ~/tmp/windows.txt
+
+# Save the workspce placement of all Google Chrome windows to a file:
+$ window-workspace-save | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
+````
