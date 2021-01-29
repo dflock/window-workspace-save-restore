@@ -67,9 +67,16 @@ Seems to work OK for applications with lots of document/tab windows, but not so 
 
 ### Doesn't really help with crashes
 
-You need to run the save script first, before you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. You could run the script regularly every few minutes using `cron`, for example you could run this every 5 mins to keep a recent backup of all your Chrome window placements:
+You need to run the save script first, before you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. You could run the script regularly every few minutes using `cron`, for example you could run this every 5 mins to keep a recent backup of all your Chrome window placements. Save this as a script somewhere:
+
+```bash
+#!/usr/bin/env bash
+# Save Google Chrome windows
+window-workspace-save | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
+```
+
+then add this to your crontab to run it every 5 mins:
 
 ```shell
-# Save Google Chrome windows
-$ window-workspace-save | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
+*/5 * * * * backup-chrome-window-placement.sh
 ```
