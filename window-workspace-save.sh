@@ -35,10 +35,10 @@ ${bld}OPTIONS${off}
   -v, --verbose    show verbose/debug output
 
 ${bld}EXAMPLES${off}
-  ${gry}# Save the workspce placement of all windows to a file:${off}
+  ${gry}# Save the workspace placement of all windows to a file:${off}
   $ $script_name > ~/tmp/windows.txt
 
-  ${gry}# Save the workspce placement of all Google Chrome windows to a file:${off}
+  ${gry}# Save the workspace placement of all Google Chrome windows to a file:${off}
   $ $script_name | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
 EOF
   exit
