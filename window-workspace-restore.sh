@@ -116,11 +116,18 @@ fi
 stdin=$(cat /dev/stdin)
 
 while IFS= read -r line ; do
-  vmsg "$line"
+  vmsg "line: $line"
   ws_id=$(echo "$line" | awk '{ print $1 }')
   app_title=$(echo "$line" | awk '{ $1=""; print $0 }')
   app_title=$(trim "$app_title")
-  vmsg "Moving '$app_title' to workspace $ws_id"
+  vmsg "✅ Moving '$app_title' to workspace $ws_id"
 
-  wmctrl -r "$app_title" -t "$ws_id"
+  # We switch errexit off here because if wmctrl can't find the 
+  # window by its title anymore (maybe closed by user, or title changed)
+  # then it will return 1, causing the script to exit, which isn't what we want.
+  set +o errexit
+  
+  if ! wmctrl -r "$app_title" -t "$ws_id"; then
+    msg "☠️ Window with title '$app_title' not found."
+  fi
 done <<< "$stdin"
