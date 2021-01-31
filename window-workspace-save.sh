@@ -85,6 +85,7 @@ function parse_params() {
         ;;
       -v | --verbose)
         verbose=true
+        set -o xtrace
         ;;
       *)
         msg "Unknown parameter: $param"
