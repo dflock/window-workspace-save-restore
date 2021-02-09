@@ -69,24 +69,31 @@ Seems to work OK for applications with lots of document/tab windows, but not so 
 
 You need to run the save script _first_, _before_ you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. One way around this would be to run the script regularly every few minutes using `cron`. For example, you could run this every 5 mins to keep a recent backup of all your Chrome window placements: 
 
-```bash
+[source,bash]
+----
 #!/usr/bin/env bash
-printenv
+# Print the current environment, without colours/escapes, so it doesn't mess up the terminal
+printenv | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
 set -o xtrace
-# wmctrl needs this - set it to whatever "echo $DISPLAY" says.
 export DISPLAY=:0.0
 # Save Visual Studio Code windows
-$HOME/bin/window-workspace-save --verbose | grep 'Visual Studio Code' > $HOME/tmp/vscode-windows.txt
-```
+windows=$(/home/duncan/bin/window-workspace-save | grep 'Visual Studio Code')
+# Only overwite the file if there are windows
+if [ -n "$windows" ]; then
+  echo "$windows" > /home/duncan/.config/windows/vscode-windows.txt
+fi
+----
 
 Save this as a script somewhere and make it executable (`chmod +x $HOME/bin/backup-chrome-window-placement.sh`), then add this to your crontab to run it every 5 mins:
 
-```shell
+[source,shell]
+----
 */5 * * * * $HOME/bin/backup-chrome-window-placement.sh > $HOME/tmp/backup-vscode-window-placement.log 2>&1
-```
+----
 
 or this to run it every minute:
 
-```shell
+[source,shell]
+----
 * * * * * $HOME/bin/backup-chrome-window-placement.sh > $HOME/tmp/backup-vscode-window-placement.log 2>&1
-```
+----
