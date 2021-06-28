@@ -3,47 +3,51 @@
 
 These two scripts let you:
 
-* Save the current workspace placement of all windows, to stdout.
+* Save the current workspace placement of windows, to stdout.
 * Restore the workspace placement of windows from stdin.
 
 This allows you to dump window workspace placement to a file, then restore them later.
 
 You can filter the list through grep on the way out or back in, to only affect a subset of windows.
 
-## Why is this useful?
+== Why is this useful?
 
-I currently have VSCode open, with 7 windows, arranged across 3 workspaces. If I quit and restart VSCode, all the windows will come back, but they will all be opened in the current workspace - and I'll have to move the back to the appropriate workspace. These two script let you automate this:
+I currently have VSCode open, with 7 windows, arranged across 3 workspaces. If I quit and restart VSCode, all the windows will come back, but they will all be opened in the current workspace - and I'll have to move the back to the appropriate workspace. These two scripts let you automate this:
 
-```shell
+[source,console]
+----
 # Run save to save VSCode window placements
 $ window-workspace-save | grep "Visual Studio" > ~/tmp/vscode-windows.txt
 
 # Restart VSCode... then restore the VSCode windows to the correct workspaces
 $ cat ~/tmp/vscode-windows.txt | window-workspace-restore
-```
+----
 
 This is even more useful with Google Chrome. I currently have 47 Chrome windows open, across 18 workspaces. When Chrome is restarted, these will all be restored to the current workspace, which is pretty annoying. This allows you to automate moving them back.
 
-## Requirements
+== Requirements
 
 You need `wmctrl` installed. See: https://www.freedesktop.org/wiki/Software/wmctrl/
 
 For Debian/Ubuntu, you can do:
 
-```shell
+[source,console]
+----
 $ sudo apt install wmctrl
-```
+----
 
-## Installation
+== Installation
 
-```shell
+[source,console]
+----
 $ sudo cp window-workspace-save.sh /usr/bin/window-workspace-save
 $ sudo cp window-workspace-restore.sh /usr/bin/window-workspace-restore
-```
+----
 
-## Usage
+== Usage
 
-```shell
+[source,console]
+----
 # Restore the workspace placement of windows from a file:
 $ cat ~/tmp/windows.txt | window-workspace-restore
 
@@ -55,19 +59,19 @@ $ window-workspace-save > ~/tmp/windows.txt
 
 # Save the workspace placement of all Google Chrome windows to a file:
 $ window-workspace-save | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
-```
+----
 
-## Caveats
+== Caveats
 
-### Only works with windows with unique titles
+=== Only works with windows with unique titles
 
 This uses `wmctrl` to do this. Wmctrl _does have_ window IDs, but these aren't stable, so when applications are restarted they will get new window ids. The only thing that you can use is the window's title. So, if you have lots of terminal windows open all called "Terminal", then these will probably get moved around arbitrarily.
 
 Seems to work OK for applications with lots of document/tab windows, but not so well with lots of instances of single window applications, which sometimes to have the same window title.
 
-### Doesn't really help with crashes
+=== Doesn't really help with crashes
 
-You need to run the save script _first_, _before_ you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. One way around this would be to run the script regularly every few minutes using `cron`. For example, you could run this every 5 mins to keep a recent backup of all your Chrome window placements: 
+You need to run the save script _first_, _before_ you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. One way around this is to run the script regularly every few minutes using `cron`. For example, you could run this every 5 mins to keep a recent backup of all your Chrome window placements: 
 
 [source,bash]
 ----
