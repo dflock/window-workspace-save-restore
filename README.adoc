@@ -1,14 +1,14 @@
-# Window Workspace Placement Save & Restore
+# X11 Window Workspace Placement Save & Restore
 :author: Duncan Lock
 
 These two scripts let you:
 
-* Save the current workspace placement of windows, to stdout.
-* Restore the workspace placement of windows from stdin.
+* Save the current workspace placement of X11 windows, to stdout.
+* Restore the workspace placement of X11 windows from stdin.
 
-This allows you to dump window workspace placement to a file, then restore them later.
+This allows you to dump window workspace placements to a file, then restore those windows to their correct workspaces later.
 
-You can filter the list through grep on the way out or back in, to only affect a subset of windows.
+You can filter the list through grep on the way out or back in, to only affect a subset of the windows.
 
 == Why is this useful?
 
@@ -19,11 +19,11 @@ I currently have VSCode open, with 7 windows, arranged across 3 workspaces. If I
 # Run save to save VSCode window placements
 $ window-workspace-save | grep "Visual Studio" > ~/tmp/vscode-windows.txt
 
-# Restart VSCode... then restore the VSCode windows to the correct workspaces
+# Restart VSCode... then restore the VSCode windows to their correct workspaces:
 $ cat ~/tmp/vscode-windows.txt | window-workspace-restore
 ----
 
-This is even more useful with Google Chrome. I currently have 47 Chrome windows open, across 18 workspaces. When Chrome is restarted, these will all be restored to the current workspace, which is pretty annoying. This allows you to automate moving them back.
+This works with any X11 windows, not just VSCode.
 
 == Requirements
 
@@ -65,13 +65,13 @@ $ window-workspace-save | grep 'Google Chrome' > ~/tmp/chrome-windows.txt
 
 === Only works with windows with unique titles
 
-This uses `wmctrl` to do this. Wmctrl _does have_ window IDs, but these aren't stable, so when applications are restarted they will get new window ids. The only thing that you can use is the window's title. So, if you have lots of terminal windows open all called "Terminal", then these will probably get moved around arbitrarily.
+This uses `wmctrl` to do this. Wmctrl _does have_ window IDs, but these aren't stable, so when applications are restarted they will get new window IDs. The only thing that you can use is the window's title. So, if you have lots of terminal windows open all called "Terminal", then these will probably get moved around arbitrarily.
 
-Seems to work OK for applications with lots of document/tab windows, but not so well with lots of instances of single window applications, which sometimes to have the same window title.
+Seems to work OK for applications with lots of document/tab windows, but not so well with lots of instances of single window applications, which sometimes do have the same window title.
 
 === Doesn't really help with crashes
 
-You need to run the save script _first_, _before_ you can restore - so it works OK with deliberate restarts. If the app crashes and you haven't run the save script... then you're out of luck. One way around this is to run the script regularly every few minutes using `cron`. For example, you could run this every 5 mins to keep a recent backup of all your Chrome window placements: 
+You need to run the save script _first_, _before_ you can restore - so it works OK with deliberate restarts. If the app crashes - and you haven't run the save script... then you're out of luck. One way around this is to run the script regularly every few minutes using `cron`. For example, you could run this every 5 mins to keep a recent backup of all your 'Visual Studio Code' window placements: 
 
 [source,bash]
 ----
@@ -80,15 +80,15 @@ You need to run the save script _first_, _before_ you can restore - so it works 
 printenv | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
 set -o xtrace
 export DISPLAY=:0.0
-# Save Visual Studio Code windows
+# Save Visual Studio Code window placements to a variable
 windows=$(/home/duncan/bin/window-workspace-save | grep 'Visual Studio Code')
-# Only overwite the file if there are windows
+# Only overwrite the file if there are windows
 if [ -n "$windows" ]; then
-  echo "$windows" > /home/duncan/.config/windows/vscode-windows.txt
+  echo "$windows" > $HOME/.config/windows/vscode-windows.txt
 fi
 ----
 
-Save this as a script somewhere and make it executable (`chmod +x $HOME/bin/backup-chrome-window-placement.sh`), then add this to your crontab to run it every 5 mins:
+Save this as a script somewhere and make it executable (`chmod +x $HOME/bin/backup-vscode-window-placement.sh`), then add this to your crontab to run it every 5 mins:
 
 [source,shell]
 ----
